@@ -1,2 +1,2 @@
 # backend-lab
-Initial backand repository for labs.
+LAB2 backend-lab.
