@@ -8,15 +8,13 @@ import java.sql.Date;
 @Table(name = "user", schema = "public")
 public class User {
 //
-//  "User": [
 //  {
 //    "login": "9257",
-//          "firstname": "Black"
-//    "lastname": "White"
-//    "dateofbirth": "2000-01-01"
+//          "firstname": "Black",
+//    "lastname": "White",
+//    "dateofbirth": "2000-01-01",
 //    "active": "T"
 //  }
-// ]
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;

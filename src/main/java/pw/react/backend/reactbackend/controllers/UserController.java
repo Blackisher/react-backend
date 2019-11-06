@@ -59,7 +59,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value="/{login}", method = RequestMethod.GET)
+    @RequestMapping(value="/{login:[a-z]([0-9]|[a-z])+}", method = RequestMethod.GET)
     public User getByLogin(@PathVariable String login, Model model) {
         //Lab3task2point6 create the repository that will find the user by the login.
         Iterable<User> result = repository.findAll();
@@ -76,6 +76,58 @@ public class UserController {
             return asd.get();
         } else {
             return null;
+        }
+    }
+
+    //LAB03task03
+    //    create rest endpoint to retrieve the User when exists or return proper message and status code when it does not,
+    //getting by id
+    @RequestMapping(value="/{id:[1-9][0-9]*}", method = RequestMethod.GET)
+    public ResponseEntity<User> getUserById(@PathVariable String id, Model model) {
+        Optional<User> result = repository.findById(Long.valueOf(id));
+        if (Optional.empty().equals(result)) {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("User by id", "not found");
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.FORBIDDEN);
+        } else {
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("User by id", "found");
+            User userToReturn = result.get();
+            return new ResponseEntity<User>(userToReturn, responseHeaders, HttpStatus.OK);
+        }
+    }
+
+    //    create rest endpoint to update the User when exists or return proper message and status code when it does not,
+    @PutMapping
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        Optional<User> result = repository.findById(Long.valueOf(user.getId()));
+        if (Optional.empty().equals(result)) {
+            //user does not exists.
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("Unable to update", "user not found");
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        } else {
+            User updatedTo = repository.save(user);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("User updated", "true");
+            return new ResponseEntity<User>(updatedTo, responseHeaders, HttpStatus.OK);
+        }
+    }
+
+    //    create rest endpoint to delete the User if exist or return proper message and status code when it does not.
+    @DeleteMapping
+    public ResponseEntity<User> deleteUser(@RequestBody User user) {
+        Optional<User> result = repository.findById(Long.valueOf(user.getId()));
+        if (Optional.empty().equals(result)) {
+            //user does not exists.
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("Unable to delete", "user not found");
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.BAD_REQUEST);
+        } else {
+            repository.delete(user);
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.set("User deleted", "true");
+            return new ResponseEntity<User>(null, responseHeaders, HttpStatus.OK);
         }
     }
 }
